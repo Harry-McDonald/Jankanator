@@ -66,6 +66,12 @@ while True:
     if AVOIDING: # Check if we are in the avoiding stage
       if INITIAL_EVADE:
         print("INITIAL EVADE")
+        Motors.stop()
+        print("~~~~~ Little extra turn")
+        Motors.turnDegrees(turn_inc)
+        orient = orient + turn_inc
+        time.sleep(2)
+        print("~~~~~~ EVADE")
         Motors.moveDistance(evade_dist,mtr_speed,mtr_speed)
         time.sleep(2) # adjustable when optimising -> could make a min sleep function that determines time needed to move based on mtr_speed
         INITIAL_EVADE = False # We have finished our initial move - next iteration should check if there is a object on our left
@@ -116,7 +122,7 @@ while True:
 
         dist_target = new_target_dist # Reinitialise the distance to the target
         orient = 0 # degrees -> Reinitialise the orientation 0 deg is facing the target
-        Motors.write(mtr_speed, mtr_speed) # Get on your bike
+        #Motors.write(mtr_speed, mtr_speed) # Get on your bike
         target_time0 = time.clock() # Get time that the Jankanator starts moving towards the target again
         target_timer = True # Turn target timer on
         print("Should be moving towards target - start time:",target_time0)
