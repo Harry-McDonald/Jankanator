@@ -1,7 +1,8 @@
 #!/bin/bash
 echo "Hello World"
-#plink pi@192.168.4.1 -pw qwerasdf < cvtest.py "cat > ~/cvtest.py"
+plink pi@192.168.4.1 -pw qwerasdf < configwifi.txt "cat > ~/configwifi.txt"
 plink pi@192.168.4.1 -pw qwerasdf < motortesting.py "cat > ~/motortesting.py"
+plink pi@192.168.4.1 -pw qwerasdf < pathfind.py "cat > ~/pathfind.py"
 plink pi@192.168.4.1 -pw qwerasdf #< "python3 motortesting.py"
 #plink pi@192.168.4.1 -pw qwerasdf < "python3 micromelon_server.py"
 
