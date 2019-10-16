@@ -28,16 +28,17 @@ rc.connectSerial()
 # cv2.imshow('Image',image)
 
 # ~~~~~~~ Basic obect avoid algorithn ~~~~~~~~~~~~~
-Motors.write(30,30)
-for i in range(200):
-  dist = Ultrasonic.read() # centimeters
-  if dist > 20:
-    Motors.write(30,30)
-  elif dist < 20:
-    Motors.turnDegrees(10)
-  time.sleep(0.1)
-  
-  
+# Motors.write(30,30)
+# for i in range(200):
+#   dist = Ultrasonic.read() # centimeters
+#   if dist > 20:
+#     Motors.write(30,30)
+#   elif dist < 20:
+#     Motors.turnDegrees(10)
+#   time.sleep(0.1)
+
+# ~~~~~~~ Turn larger than 90 degs ~~~~~~~~~~~~~
+Motors.turnDegrees(-160)
 # ~~~~~~~~~~~~~~ Stop Motor ~~~~~~~~~~~~
 #Motors.stop()
 
