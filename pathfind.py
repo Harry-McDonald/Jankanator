@@ -2,6 +2,7 @@ from micromelon import *
 import math
 from picamera.array import PiRGBArray
 from picamera import PiCamera
+from timeit import default_timer as timer
 import time
 import cv2
 import time
@@ -49,7 +50,10 @@ orient = orig_orient #initialise
 # Start engine
 Motors.write(mtr_speed, mtr_speed)
 target_time0 = timer() # Get the time the Jankanator starts moving towards the target
+<<<<<<< HEAD
 print("Started moving to the target at: ",target_time0)
+=======
+>>>>>>> 2ac07f3a3a5c60e33f731db23f9a5b8478685387
 target_timer = True # Turn target timer on
 #Begin algorithm
 while True:
