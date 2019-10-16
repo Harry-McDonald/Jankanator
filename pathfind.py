@@ -2,6 +2,7 @@ from micromelon import *
 import math
 from picamera.array import PiRGBArray
 from picamera import PiCamera
+from timeit import default_timer as timer
 import time
 import cv2
 import time
@@ -44,7 +45,7 @@ orient = orig_orient #initialise
 
 # Start engine
 Motors.write(mtr_speed, mtr_speed)
-target_time0 = time.clock() # Get the time the Jankanator starts moving towards the target
+target_time0 = timer() # Get the time the Jankanator starts moving towards the target
 target_timer = True # Turn target timer on
 #Begin algorithm
 while True:
@@ -54,7 +55,7 @@ while True:
   print("IR dist Left = ",ir_distL)
   ir_distR = IR.readRight() #cm
   # Check if we have reached our desired distance
-  # target_check_time = time.clock()
+  # target_check_time = timer()
   # time_moving_to_target_check = target_check_time - target_time0
   # print("time movng check", time_moving_to_target_check)
   # dist_check = dist_target - (mtr_speed*time_moving_to_target_check)
@@ -79,7 +80,7 @@ while True:
         print('Object on my left')
         Motors.write(mtr_speed, mtr_speed) # Keep moving until clear
         if not AVOIDING_TIMER: # if avoiding timer hasn't already been set -> set it
-          avoiding_time0 = time.clock() # Get time when motors start in AVOIDING mode
+          avoiding_time0 = timer() # Get time when motors start in AVOIDING mode
           print("Timer0 set")
           AVOIDING_TIMER = True # Record that avoiding timer has been set in this avoiding iteration
       else: # If we have cleared the object
@@ -87,7 +88,7 @@ while True:
         Motors.stop()
         AVOIDING = False # No longer avoiding
         dist_moved_calc = False # Reinitialise until next avoiding stage
-        avoiding_time1 = time.clock() # Get time when Jankanator has finished avoiding
+        avoiding_time1 = timer() # Get time when Jankanator has finished avoiding
 
         if AVOIDING_TIMER: # check if extra avoiding was necessary
           time_avoiding = avoiding_time1 - avoiding_time0 # Total time elapsed while avoiding
@@ -123,7 +124,7 @@ while True:
         dist_target = new_target_dist # Reinitialise the distance to the target
         orient = 0 # degrees -> Reinitialise the orientation 0 deg is facing the target
         #Motors.write(mtr_speed, mtr_speed) # Get on your bike
-        target_time0 = time.clock() # Get time that the Jankanator starts moving towards the target again
+        target_time0 = timer() # Get time that the Jankanator starts moving towards the target again
         target_timer = True # Turn target timer on
         print("Should be moving towards target - start time:",target_time0)
         AVOIDING_TIMER = False # Re-initialise timer so that it can be restarted in the next avoiding stage
@@ -137,7 +138,7 @@ while True:
     print("AVOIDING")
     Motors.stop() #stop
     if not dist_moved_calc: # if we haven't already calculated the distance moved in the last targetting phase -> do the calculation
-      target_time1 = time.clock() # Get the time at which the Jankanator stops moving towards the target
+      target_time1 = timer() # Get the time at which the Jankanator stops moving towards the target
       target_timer = False # Turn target timer off because we aren't moving towards the target anymore
       targetting_time = target_time1 - target_time0 # Time elapsed while moving toward the target
       dist_target = dist_target - (mtr_speed*targetting_time) # Calculate the distance we moved toward the target
