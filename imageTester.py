@@ -17,10 +17,10 @@ def takeImage():
     # bounding box surrounding the barcode on the image
     (x, y, w, h) = barcode.rect
     cv2.rectangle(image, (x, y), (x + w, y + h), (0, 0, 255), 2)
-    print(h)
+    print("h = ",h)
 
-    points = barcodes.polygon
-    pts = np.array(points, np.int32)
+    points = barcode.polygon
+    pts = numpy.array(points, numpy.int32)
     pts = pts.reshape((-1, 1, 2))
     cv2.polylines(image, [pts], True, (0, 255, 0), 3)
 
@@ -42,11 +42,16 @@ def takeImage():
      
 
 def getQRdist(data):
-  delta_y_left = data['y11']-data['y21']
-  delta_y_right = data['y12']-data['y22']
+  delta_y_left = math.sqrt((data['y21']-data['y11'])^2+(data['x21']-data['x11'])^2)
+  delta_y_right = math.sqrt((data['y22']-data['y12'])^2+(data['x22']-data['x12'])^2)
+  print("y21 =", data['y21'])
+  #print(delta_y_left)
+  #print(delta_y_right)
   h = (delta_y_left+delta_y_right)/2
-  F = 50*274/7.1
-  d = (7.1*F/h)-8
+  print("h2 = ",h)
+  F = 100*116.38841354229415/7.1
+  d = 0.1*((7.1*F/h)-8)
+  print(d)
   return d
 
 def getAngle(data):
@@ -64,7 +69,7 @@ def getAngle(data):
   L = math.sqrt((x22-x12)^2+(y22-y12)^2)
   cm2px = h_QR/dist
   z_cm = zpx*cm2px
-  theta = math.atan(z_cm/dist)
+  theta = math.atan(z_cm/dist)*180/math.pi
   return theta
 
   

@@ -10,7 +10,7 @@ import time
 import numpy as np
 import timeit
 from pyzbar import pyzbar
-import imageTesting as IT
+import imageTester as IT
 
 
 rc = RoverController()
@@ -45,7 +45,7 @@ min_obj_Ultradist = 30 #cm
 evade_dist = 10 #cm
 # Define final goal
 
-final_dist = IT.getQRdist(takeImage) #cm
+final_dist = IT.getQRdist(IT.takeImage()) #cm
 print("final_dist = ",final_dist)
 dist_target = final_dist # Initialise the distance from the Jankanator to the flagpole
 
@@ -144,12 +144,15 @@ while True:
           turn = turns[i].item()
           Motors.turnDegrees(turn,speed = 5)
           time.sleep(1)
-        image = IT.takeImage()
         
-        if not: 
+        image_data = IT.takeImage()
+        if not image_data: 
           dist_target = new_target_dist # Reinitialise the distance to the target
         else: 
-          dist_target = IT.getQRdist()
+          dist_target = IT.getQRdist(image_data)
+          theta = IT.getAngle(image_data)
+          Motors.turnDegrees(theta)
+
 
         orient = 0 # degrees -> Reinitialise the orientation 0 deg is facing the target
         #Motors.write(mtr_speed, mtr_speed) # Get on your bike
