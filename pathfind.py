@@ -2,7 +2,6 @@ from micromelon import *
 import math
 #from picamera.array import PiRGBArray
 #from picamera import PiCamera
-from timeit import default_timer as timer
 import time
 import cv2
 import time
@@ -10,10 +9,7 @@ import numpy as np
 import timeit
 
 rc = RoverController()
-rc.connectSerial()
-
-rc = RoverController()
-rc.connectSerial()
+rc.connectIP()
 
 # ~~~~~~~~~~~~~~ Functions ~~~~~~~~~~~~~~~~~~
 def deg2rad(degrees):
@@ -112,12 +108,7 @@ while True:
         new_target_dist = math.sqrt(dist_target**2+dist_avoiding**2 - 2*dist_target*dist_avoiding*math.cos(deg2rad(orient))) #Re-calculate distnace as crow flies to the target -> cos rule
         beta = 180 - rad2deg(math.asin(dist_target*math.sin(deg2rad(orient))/new_target_dist)) # Angle between new_target_dist and dist_avoiding -> sine rule -> also not its 180 due to quadrants
         phi = beta - 180 # degrees the rover must turn to be facing the target -> remember positive angles are clockwise on the Jankanator, we want to go the opposite here
-        # print("dist to target = ",dist_target)
-        # print("Dist avoiding = ",dist_avoiding)
-        # print("new_target_dist = ", new_target_dist)
-        # print("orient = ",orient)
-        # print('BETA = ',beta)
-        # print('PHI = ',phi)
+
         inc = 5 # How many steps to break the turn int
         if phi > 45 or phi < -45 : # Break turn into 'inc' increments so that the tracks dont fall off
           turns = np.array([phi/inc for i in range(inc)])
