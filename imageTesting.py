@@ -2,6 +2,7 @@ import numpy
 import cv2
 from micromelon import *
 from pyzbar import pyzbar
+import math
 #rc = RoverController()
 #rc.connectIP() # default is 192.168.4.1
 #image = Robot.getImageCapture(IMRES.R640x480)
@@ -73,6 +74,27 @@ def getQRdist():
   cv2.imshow("Image", image)
   cv2.waitKey(0)
   return QRdistance(h)
+
+def getAngle(data,dist):
+  #x11 = data['x11']
+  x12 = data['x12']
+  #x21 = data['x21']
+  x22 = data['x22']
+  #y11 = data['y11']
+  y12 = data['y12']
+  #y21 = data['y21']
+  y22 = data['y22']
+  zpx = (1920/2-(x12+x22)/2) # distance from image center to QR center in pixels
+  h_QR = 7.1 #cm
+  L = math.sqrt((x22-x12)^2+(y22-y12)^2)
+  cm2px = h_QR/dist
+
+  z_cm = zpx*cm2px
+  theta = math.atan(z_cm/dist)
+  return theta
+
+
+
 
 # at 40cm from QR -> w = 291 -> 0.1375 cm/px
 # at 50cm -> w = 240
