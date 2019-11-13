@@ -2,11 +2,15 @@ from micromelon import *
 import math
 #from picamera.array import PiRGBArray
 #from picamera import PiCamera
+from timeit import default_timer as timer
 import time
 import cv2
 import time
 import numpy as np
 import timeit
+from pyzbar import pyzbar
+#import imageTesting as IT
+
 
 rc = RoverController()
 rc.connectIP()
@@ -20,6 +24,11 @@ def rad2deg(rads):
   degs = rads*180/math.pi
   return degs
 
+# def QRdistance(h):
+#   F = 50*274/7.1
+#   d = 7.1*F/h -8
+#   return d
+
 # initialise variables
 mtr_speed = 10 #cm/s
 turn_inc = 10 #degrees
@@ -27,7 +36,9 @@ min_obj_IRdist = 50 #cm
 min_obj_Ultradist = 30 #cm
 evade_dist = 10 #cm
 # Define final goal
-final_dist = 150 #cm
+
+final_dist = 200 #IT.getQRdist() #cm
+print("final_dist = ",final_dist)
 dist_target = final_dist # Initialise the distance from the Jankanator to the flagpole
 
 # Initial states
