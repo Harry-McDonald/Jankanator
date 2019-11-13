@@ -21,4 +21,8 @@ print("dist = ",dist)
 angle = IT.getAngle(data)
 print("theta = ", angle)
 
-Motors.turnDegrees(angle,3)
+# phi = [360/8 for i in range(8)]
+# print(phi)
+# for i in phi:
+#   Motors.turnDegrees(i)
+

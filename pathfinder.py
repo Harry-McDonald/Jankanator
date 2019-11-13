@@ -146,7 +146,7 @@ while True:
           time.sleep(1)
         
         image_data = IT.takeImage()
-        if not image_data: 
+        if image_data['barcode_len']==0: 
           dist_target = new_target_dist # Reinitialise the distance to the target
         else: 
           dist_target = IT.getQRdist(image_data)
