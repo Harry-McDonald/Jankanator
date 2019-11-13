@@ -15,7 +15,7 @@ def QRdistance(h):
   # therefore 30cm = 116px
   #y = -2*10**(-5)*x**3 + 0.0129*x**2 - 3.2978*x + 349.32
   F = 50*274/7.1
-  d = 7.1*F/h -8
+  d = (7.1*F/h)-8
   return d
 
 #_____________ Code for VIDEO ___________-----

@@ -1,7 +1,7 @@
 from micromelon import *
 import math
-from picamera.array import PiRGBArray
-from picamera import PiCamera
+#from picamera.array import PiRGBArray
+#from picamera import PiCamera
 from timeit import default_timer as timer
 import time
 import cv2

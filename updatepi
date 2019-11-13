@@ -1,10 +1,11 @@
 #!/bin/bash
 echo "Hello World"
-plink pi@192.168.4.1 -pw qwerasdf < barcode_scanner_image.py "cat > ~/barcode_scanner_image.py"
-plink pi@192.168.4.1 -pw qwerasdf < motortesting.py "cat > ~/motortesting.py"
-plink pi@192.168.4.1 -pw qwerasdf < pathfind.py "cat > ~/pathfind.py"
-plink pi@192.168.4.1 -pw qwerasdf < imageTesting.py "cat > ~/imageTesting.py"
-plink pi@192.168.4.1 -pw qwerasdf #< "python3 motortesting.py"
-#plink pi@192.168.4.1 -pw qwerasdf < "python3 micromelon_server.py"
+plink pi@192.168.4.1 -pw raspberry < barcode_scanner_image.py "cat > ~/barcode_scanner_image.py"
+plink pi@192.168.4.1 -pw raspberry < motortesting.py "cat > ~/motortesting.py"
+plink pi@192.168.4.1 -pw raspberry < pathfind.py "cat > ~/pathfind.py"
+plink pi@192.168.4.1 -pw raspberry < imageTesting.py "cat > ~/imageTesting.py"
+plink pi@192.168.4.1 -pw raspberry < pyzbar-0.1.8-py2.py3-none-any.whl "cat > ~/pyzbar-0.1.8-py2.py3-none-any.whl"
+plink pi@192.168.4.1 -pw raspberry #< "python3 motortesting.py"
+#plink pi@192.168.4.1 -pw raspberry < "python3 micromelon_server.py"
 
 
