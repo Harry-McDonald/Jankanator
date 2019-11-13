@@ -2,6 +2,7 @@ import numpy
 import cv2
 from micromelon import *
 from pyzbar import pyzbar
+import math
 
 def takeImage():
   image = Robot.getImageCapture(IMRES.R1920x1088)
@@ -48,9 +49,24 @@ def getQRdist(data):
   d = (7.1*F/h)-8
   return d
 
-def getQRorient(data):
-  centroid_x = 1920/2 data['x'] + (data['w']/2)
-  centroid_y = data['y'] + (data'h']/2)
+def getAngle(data):
+  #x11 = data['x11']
+  x12 = data['x12']
+  #x21 = data['x21']
+  x22 = data['x22']
+  #y11 = data['y11']
+  y12 = data['y12']
+  #y21 = data['y21']
+  y22 = data['y22']
+  dist = getQRdist(data)
+  zpx = (1920/2-(x12+x22)/2) # distance from image center to QR center in pixels
+  h_QR = 7.1 #cm
+  L = math.sqrt((x22-x12)^2+(y22-y12)^2)
+  cm2px = h_QR/dist
+  z_cm = zpx*cm2px
+  theta = math.atan(z_cm/dist)
+  return theta
+
   
 
 
