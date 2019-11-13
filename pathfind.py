@@ -9,7 +9,7 @@ import time
 import numpy as np
 import timeit
 from pyzbar import pyzbar
-#import imageTesting as IT
+import imageTesting as IT
 
 
 rc = RoverController()
@@ -37,7 +37,7 @@ min_obj_Ultradist = 30 #cm
 evade_dist = 10 #cm
 # Define final goal
 
-final_dist = 200 #IT.getQRdist() #cm
+final_dist = IT.getQRdist() #cm
 print("final_dist = ",final_dist)
 dist_target = final_dist # Initialise the distance from the Jankanator to the flagpole
 
@@ -74,7 +74,6 @@ while True:
   # print("distcheck = ",dist_check)
   # if dist_check <= 0:
   #   Motors.stop()
-  #   break
   if ultra_dist > min_obj_Ultradist: #Enter if there is no object infront of Jankanator
     if AVOIDING: # Check if we are in the avoiding stage
       if INITIAL_EVADE:
