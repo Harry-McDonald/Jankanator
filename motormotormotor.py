@@ -41,30 +41,38 @@ def tacho2distance(tacho):
 
 def turnCunt(degrees_fake):
     if degrees_fake > 0:
-        degrees = degrees_fake*(1/1.15)
+        degrees = degrees_fake*(1.1/1)
         turns = int((degrees - degrees%15)/15)
         print(turns)
         small_turn = degrees%15
         print(small_turn)
         for turn in range(turns):
-            Motors.turnDegrees(15,speed=15)
+            if turn%3 == 0:
+                Motors.moveDistance(-3)
+                time.sleep(0.5)
+                Motors.moveDistance(3)
+                time.sleep(0.5)
+            Motors.turnDegrees(15,speed=10)
             time.sleep(1)
             turn+=1
-        Motors.turnDegrees(small_turn,speed=15)
+        Motors.turnDegrees(small_turn,speed=10)
     else:
-        degrees = abs(degrees_fake*(1/1.15))
+        degrees = abs(degrees_fake*(1.1/1))
         turns = int((degrees - degrees%15)/15)
         print(turns)
         small_turn = degrees%15
         print(small_turn)
         for turn in range(abs(turns)):
-            Motors.turnDegrees(15,speed=15, reverse = True)
+            if turn%3 == 0:
+                Motors.moveDistance(-3)
+                Motors.moveDistance(3)
+            Motors.turnDegrees(15,speed=10, reverse = True)
             time.sleep(1)
             turn+=1
         Motors.turnDegrees(small_turn,speed=30, reverse = True)
 
-#turnCunt(360)
+turnCunt(180)
 
-distance = IT.getQRdist(IT.takeImage())
+#distance = IT.getQRdist(IT.takeImage())
 
 
