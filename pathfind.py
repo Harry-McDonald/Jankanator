@@ -79,6 +79,7 @@ AVOIDING_TIMER = False # Timer used to record time elapsed while moving towards 
 dist_moved_calc = False # Initialise
 INITIAL_EVADE = False # When an object is sensed the first manouever is to move 10cm in the clear direction and then run checks on the left ir
 QR_FOUND = True # initialise as true
+IR_OFF = False
 
 # initialise variables
 mtr_speed = 10 #cm/s
@@ -137,19 +138,19 @@ while True:
   #print("IR dist Left = ",ir_distL)
   ir_distR = IR.readRight() #cm
   # Check if we have reached our desired distance
-  target_check_time = timer()
-  print("target_time0 = ",target_time0)
-  time_moving_to_target_check = target_check_time - target_time0
-  print("time movng check", time_moving_to_target_check)
-  dist_check = dist_target - (mtr_speed*time_moving_to_target_check)
-  print("distcheck = ",dist_check)
-  # if dist_check <= 50:
-  #   #Motors.stop()
+  # target_check_time = timer()
+  # print("target_time0 = ",target_time0)
+  # time_moving_to_target_check = target_check_time - target_time0
+  # print("time movng check", time_moving_to_target_check)
+  # dist_check = dist_target - (mtr_speed*time_moving_to_target_check)
+  # print("distcheck = ",dist_check)
+  # if dist_check <= 15:
   #   IR_OFF = True 
-  #   break
-  if dist_check <= 0:
-    Motors.stop()
-    break
+
+  # if dist_check <= 5:
+  #   Motors.stop()
+  #   print("we're going dbah")
+  #   break 
   if ultra_dist > min_obj_Ultradist: #Enter if there is no object infront of Jankanator
     if AVOIDING: # Check if we are in the avoiding stage
       if INITIAL_EVADE:
@@ -234,7 +235,7 @@ while True:
       #print("STILL NOT AVOIDING")
       Motors.write(mtr_speed, mtr_speed) # Keep on trucking
 
-  elif ultra_dist <= min_obj_Ultradist: # Sense object
+  elif ultra_dist <= min_obj_Ultradist and not IR_OFF: # Sense object
     AVOIDING = True
     INITIAL_EVADE = True
     #print("AVOIDING")
