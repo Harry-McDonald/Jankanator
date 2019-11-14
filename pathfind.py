@@ -29,6 +29,7 @@ def angleAdjust(dist_target):
     Motors.turnDegrees(theta)
     time.sleep(1)
   time.sleep(4)
+  print("QR FOUND from angle = ",QR_FOUND)
   return (QR_FOUND,dist_target)
 
 def findQR(turn_direction = None, dist_target = 200):
@@ -37,12 +38,13 @@ def findQR(turn_direction = None, dist_target = 200):
     turn_inc = -20
   elif turn_direction == "left":
     turn_inc = 20
-  QR_FOUND = angleAdjust(dist_target)[1]
+  QR_FOUND = angleAdjust(dist_target)[0]
+  print(QR_FOUND)
   while QR_FOUND == False:
     Motors.turnDegrees(turn_inc) # Turn until no longer facing the object - this turns a set amount and then rechecks on the next iteration
     orient = orient + turn_inc # record orientation wrt to the target - i.e 0 is facing the target    
     time.sleep(1)
-    QR_FOUND = angleAdjust(dist_target)[1]
+    QR_FOUND = angleAdjust(dist_target)[0]
     if abs(orient) >= 360:
       print("Bruh no idea...")
 
@@ -133,14 +135,18 @@ while True:
   #print("IR dist Left = ",ir_distL)
   ir_distR = IR.readRight() #cm
   # Check if we have reached our desired distance
-  # target_check_time = timer()
-  # time_moving_to_target_check = target_check_time - target_time0
-  # print("time movng check", time_moving_to_target_check)
-  # dist_check = dist_target - (mtr_speed*time_moving_to_target_check)
-  # print("distcheck = ",dist_check)
-  # if dist_check <= 0:
-  #   Motors.stop()
+  target_check_time = timer()
+  time_moving_to_target_check = target_check_time - target_time0
+  print("time movng check", time_moving_to_target_check)
+  dist_check = dist_target - (mtr_speed*time_moving_to_target_check)
+  print("distcheck = ",dist_check)
+  # if dist_check <= 50:
+  #   #Motors.stop()
+  #   IR_OFF = True 
   #   break
+  if dist_check <= 0:
+    Motors.stop()
+    break
   if ultra_dist > min_obj_Ultradist: #Enter if there is no object infront of Jankanator
     if AVOIDING: # Check if we are in the avoiding stage
       if INITIAL_EVADE:
@@ -242,7 +248,7 @@ while True:
       #print("STILL NOT AVOIDING")
       Motors.write(mtr_speed, mtr_speed) # Keep on trucking
 
-  elif ultra_dist <= min_obj_Ultradist: # Sense object
+  elif ultra_dist <= min_obj_Ultradist and not IR_OFF: # Sense object
     AVOIDING = True
     INITIAL_EVADE = True
     #print("AVOIDING")
