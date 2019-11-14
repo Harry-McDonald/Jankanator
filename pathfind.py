@@ -38,15 +38,16 @@ def findQR(turn_direction = None, dist_target = 200):
     turn_inc = -20
   elif turn_direction == "left":
     turn_inc = 20
-  QR_FOUND = angleAdjust(dist_target)[0]
+  QR_FOUND = angleAdjust(dist_target)
   print(QR_FOUND)
-  while QR_FOUND == False:
+  while QR_FOUND[0] == False:
     Motors.turnDegrees(turn_inc) # Turn until no longer facing the object - this turns a set amount and then rechecks on the next iteration
     orient = orient + turn_inc # record orientation wrt to the target - i.e 0 is facing the target    
     time.sleep(1)
     QR_FOUND = angleAdjust(dist_target)[0]
     if abs(orient) >= 360:
       print("Bruh no idea...")
+  return QR_FOUND[1]
 
 def deg2rad(degrees):
   rads = degrees*math.pi/180
@@ -85,12 +86,13 @@ turn_inc = 10 #degrees
 min_obj_IRdist = 50 #cm
 min_obj_Ultradist = 30 #cm
 evade_dist = 10 #cm
-final_dist = 200
+final_dist = 100
 dist_target = final_dist # Initialise the distance from the Jankanator to the flagpole
 
 # if doesnt work pass in final_dist to the function
-findQR(None,dist_target)
+dist_target = findQR(None,dist_target)
 angleAdjust(dist_target)
+
 
 # Define final goal
 # image_data = IT.takeImage()
@@ -136,6 +138,7 @@ while True:
   ir_distR = IR.readRight() #cm
   # Check if we have reached our desired distance
   target_check_time = timer()
+  print("target_time0 = ",target_time0)
   time_moving_to_target_check = target_check_time - target_time0
   print("time movng check", time_moving_to_target_check)
   dist_check = dist_target - (mtr_speed*time_moving_to_target_check)
@@ -208,7 +211,8 @@ while True:
           Motors.turnDegrees(turn,speed = 15)
           time.sleep(1)
         
-        findQR(turn_direction,dist_target) # search algorithm to find QR
+        dist_target = findQR(turn_direction,dist_target) # search algorithm to find QR
+        angleAdjust(dist_target)
         #--------------------------------
         # image_data = IT.takeImage()
         # if image_data ==[]: 
@@ -230,7 +234,7 @@ while True:
       #print("STILL NOT AVOIDING")
       Motors.write(mtr_speed, mtr_speed) # Keep on trucking
 
-  elif ultra_dist <= min_obj_Ultradist and not IR_OFF: # Sense object
+  elif ultra_dist <= min_obj_Ultradist: # Sense object
     AVOIDING = True
     INITIAL_EVADE = True
     #print("AVOIDING")
