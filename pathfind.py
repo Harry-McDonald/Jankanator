@@ -35,9 +35,9 @@ def angleAdjust(dist_target):
 def findQR(turn_direction = None, dist_target = 200):
   orient = 0
   if turn_direction == "right" or turn_direction == None:
-    turn_inc = -20
-  elif turn_direction == "left":
     turn_inc = 20
+  elif turn_direction == "left":
+    turn_inc = -20
   QR_FOUND = angleAdjust(dist_target)
   print(QR_FOUND)
   while QR_FOUND[0] == False:
