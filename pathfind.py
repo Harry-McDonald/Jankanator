@@ -28,7 +28,7 @@ def angleAdjust(dist_target):
     print("theta1 = ",theta)
     Motors.turnDegrees(theta)
     time.sleep(1)
-  time.sleep(4)
+  time.sleep(2)
   print("QR FOUND from angle = ",QR_FOUND)
   return (QR_FOUND,dist_target)
 
@@ -44,9 +44,9 @@ def findQR(turn_direction = None, dist_target = 200):
     Motors.turnDegrees(turn_inc) # Turn until no longer facing the object - this turns a set amount and then rechecks on the next iteration
     orient = orient + turn_inc # record orientation wrt to the target - i.e 0 is facing the target    
     time.sleep(1)
-    QR_FOUND = angleAdjust(dist_target)[0]
-    if abs(orient) >= 360:
-      print("Bruh no idea...")
+    QR_FOUND = angleAdjust(dist_target)
+    if abs(orient) >= 180:
+      turn_inc = -turn_inc
   return QR_FOUND[1]
 
 def deg2rad(degrees):
@@ -80,6 +80,7 @@ dist_moved_calc = False # Initialise
 INITIAL_EVADE = False # When an object is sensed the first manouever is to move 10cm in the clear direction and then run checks on the left ir
 QR_FOUND = True # initialise as true
 IR_OFF = False
+TAKE_PHOTO = True
 
 # initialise variables
 mtr_speed = 10 #cm/s
@@ -94,33 +95,6 @@ dist_target = final_dist # Initialise the distance from the Jankanator to the fl
 dist_target = findQR(None,dist_target)
 angleAdjust(dist_target)
 
-
-# Define final goal
-# image_data = IT.takeImage()
-# if image_data == []:
-#   QR_FOUND = False
-#   final_dist = 200
-# elif QR_FOUND:
-#   final_dist = IT.getQRdist(image_data) #cm
-#   print("final_dist1 = ",final_dist)
-#   theta = IT.getAngle(image_data)
-#   Motors.turnDegrees(theta)
-#   time.sleep(1)
-#   print("theta1 = ",theta)
-# time.sleep(4)
-
-# QR_FOUND = True
-# image_data = IT.takeImage()
-# if image_data == []:
-#   QR_FOUND = False
-#   final_dist = 200
-# elif QR_FOUND:
-#   final_dist = IT.getQRdist(image_data) #cm
-#   theta = IT.getAngle(image_data)
-#   print("theta1 = ",theta)
-#   Motors.turnDegrees(theta)
-#   time.sleep(1)
-
 # Initialise orientation, turning increment
 orig_orient = 0 # degrees -> Facing the target
 orient = orig_orient #initialise
@@ -128,10 +102,22 @@ orient = orig_orient #initialise
 # Start engine
 Motors.write(mtr_speed, mtr_speed)
 target_time0 = timer() # Get the time the Jankanator starts moving towards the target
+gunning_time = timer()
 print("Started moving to the target at: ",target_time0)
 target_timer = True # Turn target timer on
 #Begin algorithm
 while True:
+
+  if timer()-gunning_time > 2.5 and TAKE_PHOTO == True:
+    Motors.stop()
+    QR_FOUND = angleAdjust(dist_target)
+    dist_target = QR_FOUND[1]
+    gunning_time = timer()
+    print("VIBE CHECK")
+  if dist_target<5:
+    Motors.stop()
+    print("we're going dbah")
+    break
   ultra_dist = Ultrasonic.read() # centimeters
   ir_distL = IR.readLeft() #cm
   #print("Ultra dist = ",ultra_dist)
@@ -153,6 +139,7 @@ while True:
   #   break 
   if ultra_dist > min_obj_Ultradist: #Enter if there is no object infront of Jankanator
     if AVOIDING: # Check if we are in the avoiding stage
+      TAKE_PHOTO = False
       if INITIAL_EVADE:
         #print("INITIAL EVADE")
         Motors.stop()
@@ -175,11 +162,12 @@ while True:
       else: # If we have cleared the object
         #print('STOP AVOIDING')
         #TAKE IMAGE AND FIND TARGET
-
         Motors.stop()
         AVOIDING = False # No longer avoiding
+        TAKE_PHOTO = True
         dist_moved_calc = False # Reinitialise until next avoiding stage
         avoiding_time1 = timer() # Get time when Jankanator has finished avoiding
+        gunning_time = timer()
         print("stopped avoiding at: ",avoiding_time1)
 
         if AVOIDING_TIMER: # check if extra avoiding was necessary
@@ -199,6 +187,7 @@ while True:
         phi = beta - 180 # degrees the rover must turn to be facing the target -> remember positive angles are clockwise on the Jankanator, we want to go the opposite here
         if phi < 0:
           turn_direction = "left"
+          print("turn_direction = ", turn_direction)
         else:
           turn_direction = "right"
         inc = 5 # How many steps to break the turn int
@@ -209,25 +198,14 @@ while True:
           turns = np.array([phi])
         for i in range(len(turns)):
           turn = turns[i].item()
-<<<<<<< HEAD
-<<<<<<< HEAD
-          Motors.turnDegrees(turn,speed = 30)
-=======
-          Motors.turnDegrees(turn,speed = 15)
->>>>>>> 0b0f9fe7cd1362be0508ddccad502699c85ec596
-=======
-          Motors.turnDegrees(turn,speed = 15)
->>>>>>> 0b0f9fe7cd1362be0508ddccad502699c85ec596
-          time.sleep(1)
-<<<<<<< HEAD
-        image_data = IT.takeImage()
-        if image_data ==[]: 
-          dist_target = new_target_dist # Reinitialise the distance to the target
-        else: 
-          dist_target = IT.getQRdist(image_data)
-          theta = IT.getAngle(image_data)
-          Motors.turnDegrees(theta, speed = 30)
-=======
+          Motors.turnDegrees(turn)
+        # image_data = IT.takeImage()
+        # if image_data ==[]: 
+        #   dist_target = new_target_dist # Reinitialise the distance to the target
+        # else: 
+        #   dist_target = IT.getQRdist(image_data)
+        #   theta = IT.getAngle(image_data)
+        #   Motors.turnDegrees(theta, speed = 30)
         
         dist_target = findQR(turn_direction,dist_target) # search algorithm to find QR
         angleAdjust(dist_target)
@@ -241,7 +219,6 @@ while True:
         #   Motors.turnDegrees(theta)
         #   time.sleep(1)
         #--------------------------------
->>>>>>> 822b62db06324ffc43fcdcc0fb3a4af91ecaf615
         #dist_target = new_target_dist # Reinitialise the distance to the target
         orient = 0 # degrees -> Reinitialise the orientation 0 deg is facing the target
         #Motors.write(mtr_speed, mtr_speed) # Get on your bike
@@ -253,19 +230,22 @@ while True:
       #print("STILL NOT AVOIDING")
       Motors.write(mtr_speed, mtr_speed) # Keep on trucking
 
-  elif ultra_dist <= min_obj_Ultradist and not IR_OFF: # Sense object
+  elif ultra_dist <= min_obj_Ultradist:# and not IR_OFF: # Sense object
     AVOIDING = True
     INITIAL_EVADE = True
     #print("AVOIDING")
     Motors.stop() #stop
     if not dist_moved_calc: # if we haven't already calculated the distance moved in the last targetting phase -> do the calculation
-      target_time1 = timer() # Get the time at which the Jankanator stops moving towards the target
-      print("Stopped moving toward target: ",target_time1)
-      target_timer = False # Turn target timer off because we aren't moving towards the target anymore
-      targetting_time = target_time1 - target_time0 # Time elapsed while moving toward the target
-      print("Time spent moving toward target: ",targetting_time)
-      dist_target = dist_target - (mtr_speed*targetting_time) # Calculate the distance we moved toward the target
-      print("dist moving to target = ",mtr_speed*targetting_time)
+      QR_FOUND = angleAdjust(dist_target)
+      dist_target = QR_FOUND[1]
+      TAKE_PHOTO = False
+      # target_time1 = timer() # Get the time at which the Jankanator stops moving towards the target
+      # print("Stopped moving toward target: ",target_time1)
+      # target_timer = False # Turn target timer off because we aren't moving towards the target anymore
+      # targetting_time = target_time1 - target_time0 # Time elapsed while moving toward the target
+      # print("Time spent moving toward target: ",targetting_time)
+      # dist_target = dist_target - (mtr_speed*targetting_time) # Calculate the distance we moved toward the target
+      # print("dist moving to target = ",mtr_speed*targetting_time)
       dist_moved_calc = True # We have now done the calc so no need to re-do it on the next iteration
     Motors.turnDegrees(turn_inc) # Turn until no longer facing the object - this turns a set amount and then rechecks on the next iteration
     orient = orient + turn_inc # record orientation wrt to the target - i.e 0 is facing the target

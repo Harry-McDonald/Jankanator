@@ -36,8 +36,8 @@ def takeImage():
       0.5, (0, 0, 255), 2)
         # show the output image
 
-  cv2.imshow("Image", image)
-  cv2.waitKey(0)
+  #cv2.imshow("Image", image)
+  #cv2.waitKey(0)
   if len(barcodes)==0:
     return []
   barcode_data = {'x':x,'y':y,'w':w,'h':h,'x11':points[0][0], 'y11':points[0][1],'x12':points[3][0],'y12':points[3][1],'x21':points[1][0],'y21':points[1][1],'x22':points[2][0],'y22':points[2][1],'barcode_len':len(barcodes)}
