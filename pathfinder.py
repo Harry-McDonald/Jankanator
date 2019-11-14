@@ -30,7 +30,7 @@ def tacho2distance(tacho):
   left_wheel_deg = (((tacho[0])/255)*360 + ((tacho[1]))*360 + ((tacho[2])*360*360))
   right_wheel_deg = (((tacho[3])/255)*360 + ((tacho[4]))*360 + ((tacho[5])*360*360))
   left_wheel_revs = left_wheel_deg/360
-  distance = left_wheel_revs*4*math.pi
+  distance = left_wheel_revs*4*math.pi - 14
   return distance
 # def QRdistance(h):
 #   F = 50*274/7.1

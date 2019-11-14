@@ -35,6 +35,7 @@ turn_inc = 10 #degrees
 min_obj_IRdist = 50 #cm
 min_obj_Ultradist = 30 #cm
 evade_dist = 10 #cm
+
 # Define final goal
 image_data = IT.takeImage()
 final_dist = IT.getQRdist(image_data) #cm
@@ -132,7 +133,7 @@ while True:
           turns = np.array([phi])
         for i in range(len(turns)):
           turn = turns[i].item()
-          Motors.turnDegrees(turn,speed = 5)
+          Motors.turnDegrees(turn,speed = 30)
           time.sleep(1)
         image_data = IT.takeImage()
         if image_data['barcode_len']==0: 
@@ -140,7 +141,7 @@ while True:
         else: 
           dist_target = IT.getQRdist(image_data)
           theta = IT.getAngle(image_data)
-          Motors.turnDegrees(theta)
+          Motors.turnDegrees(theta, speed = 30)
         #dist_target = new_target_dist # Reinitialise the distance to the target
         orient = 0 # degrees -> Reinitialise the orientation 0 deg is facing the target
         #Motors.write(mtr_speed, mtr_speed) # Get on your bike
