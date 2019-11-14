@@ -139,8 +139,7 @@ while True:
     print("VIBE CHECK")
   if dist_target<10:
     IR_ON = False
-    Motors.moveDistance(dist_target-1)
-    print("we're going dbah")
+
     break
   ultra_dist = Ultrasonic.read() # centimeters
   ir_distL = IR.readLeft() #cm
