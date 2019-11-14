@@ -135,15 +135,18 @@ while True:
   #print("IR dist Left = ",ir_distL)
   ir_distR = IR.readRight() #cm
   # Check if we have reached our desired distance
-  # target_check_time = timer()
-  # time_moving_to_target_check = target_check_time - target_time0
-  # print("time movng check", time_moving_to_target_check)
-  # dist_check = dist_target - (mtr_speed*time_moving_to_target_check)
-  # print("distcheck = ",dist_check)
+  target_check_time = timer()
+  time_moving_to_target_check = target_check_time - target_time0
+  print("time movng check", time_moving_to_target_check)
+  dist_check = dist_target - (mtr_speed*time_moving_to_target_check)
+  print("distcheck = ",dist_check)
   # if dist_check <= 50:
   #   #Motors.stop()
   #   IR_OFF = True 
   #   break
+  if dist_check <= 0:
+    Motors.stop()
+    break
   if ultra_dist > min_obj_Ultradist: #Enter if there is no object infront of Jankanator
     if AVOIDING: # Check if we are in the avoiding stage
       if INITIAL_EVADE:
