@@ -61,10 +61,8 @@ def getQRdist(data):
 def getAngle(data):
   #x11 = data['x11']
   x12 = data['x12']
-  print("x12 = ",x12)
   x21 = data['x21']
   x22 = data['x22']
-  print("x22 = ",x22)
   #y11 = data['y11']
   y12 = data['y12']
   #y21 = data['y21']
@@ -75,8 +73,6 @@ def getAngle(data):
   L = math.sqrt((x22-x12)**2+(y22-y12)**2)
   cm2px = h_QR/L
   z_cm = zpx*cm2px
-  print("z_cm = ",z_cm)
-  print("dist = ",dist)
   theta = (1/1.3)*math.atan(z_cm/dist)*180/math.pi
   return theta
 

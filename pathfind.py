@@ -16,6 +16,27 @@ rc = RoverController()
 rc.connectIP()
 
 # ~~~~~~~~~~~~~~ Functions ~~~~~~~~~~~~~~~~~~
+def turnCunt(degrees_fake):
+  turn_inc = 20
+  if degrees_fake > 0:
+      degrees = degrees_fake*(1/1.15)
+      turns = int((degrees - degrees%turn_inc)/turn_inc)
+      small_turn = degrees%turn_inc
+      for turn in range(turns):
+          Motors.turnDegrees(turn_inc,speed=15)
+          time.sleep(1)
+          turn+=1
+      Motors.turnDegrees(small_turn,speed=15)
+  else:
+      degrees = abs(degrees_fake*(1/1.15))
+      turns = int((degrees - degrees%turn_inc)/turn_inc)
+      small_turn = degrees%turn_inc
+      for turn in range(abs(turns)):
+          Motors.turnDegrees(turn_inc,speed=15, reverse = True)
+          time.sleep(1)
+          turn+=1
+      Motors.turnDegrees(small_turn,speed=30, reverse = True)
+
 def angleAdjust(dist_target):
   QR_FOUND = True
   image_data = IT.takeImage()
@@ -35,13 +56,13 @@ def angleAdjust(dist_target):
 def findQR(turn_direction = None, dist_target = 200):
   orient = 0
   if turn_direction == "right" or turn_direction == None:
-    turn_inc = 20
-  elif turn_direction == "left":
     turn_inc = -20
+  elif turn_direction == "left":
+    turn_inc = 20
   QR_FOUND = angleAdjust(dist_target)
-  print(QR_FOUND)
   while QR_FOUND[0] == False:
-    Motors.turnDegrees(turn_inc) # Turn until no longer facing the object - this turns a set amount and then rechecks on the next iteration
+    turnCunt(turn_inc)
+    #Motors.turnDegrees(turn_inc) # Turn until no longer facing the object - this turns a set amount and then rechecks on the next iteration
     orient = orient + turn_inc # record orientation wrt to the target - i.e 0 is facing the target    
     time.sleep(1)
     QR_FOUND = angleAdjust(dist_target)
@@ -64,8 +85,10 @@ def checkSet():
     return
   theta = IT.getAngle(image_data)
   print("theta1 = ",theta)
-  Motors.turnDegrees(theta)
+  turnCunt(theta)
+  #Motors.turnDegrees(theta)
   time.sleep(4)
+
 
 # def QRdistance(h):
 #   F = 50*274/7.1
@@ -145,7 +168,7 @@ while True:
         #print("INITIAL EVADE")
         Motors.stop()
         #print("~~~~~ Little extra turn")
-        Motors.turnDegrees(turn_inc)
+        turnCunt(turn_inc)
         orient = orient + turn_inc
         time.sleep(2)
         #print("~~~~~~ EVADE")
@@ -172,7 +195,6 @@ while True:
         dist_moved_calc = False # Reinitialise until next avoiding stage
         avoiding_time1 = timer() # Get time when Jankanator has finished avoiding
         gunning_time = timer()
-        print("stopped avoiding at: ",avoiding_time1)
 
         # if AVOIDING_TIMER: # check if extra avoiding was necessary
         #   time_avoiding = avoiding_time1 - avoiding_time0 # Total time elapsed while avoiding
@@ -189,21 +211,23 @@ while True:
         new_target_dist = math.sqrt(dist_target**2+dist_avoiding**2 - 2*dist_target*dist_avoiding*math.cos(deg2rad(orient))) #Re-calculate distnace as crow flies to the target -> cos rule
         beta = 180 - rad2deg(math.asin(dist_target*math.sin(deg2rad(orient))/new_target_dist)) # Angle between new_target_dist and dist_avoiding -> sine rule -> also not its 180 due to quadrants
         phi = beta - 180 # degrees the rover must turn to be facing the target -> remember positive angles are clockwise on the Jankanator, we want to go the opposite here
+        turnCunt(phi)
+
         if phi < 0:
           turn_direction = "left"
           print("turn_direction = ", turn_direction)
         else:
           turn_direction = "right"
-        inc = 5 # How many steps to break the turn int
-        if phi > 45 or phi < -45 : # Break turn into 'inc' increments so that the tracks dont fall off
-          turns = np.array([phi/inc for i in range(inc)])
-          print(turns)
-        else:
-          turns = np.array([phi])
-        for i in range(len(turns)):
-          turn = turns[i].item()
-          Motors.turnDegrees(turn,30)
-          time.sleep(1)
+        # inc = 5 # How many steps to break the turn int
+        # if phi > 45 or phi < -45 : # Break turn into 'inc' increments so that the tracks dont fall off
+        #   turns = np.array([phi/inc for i in range(inc)])
+        #   print(turns)
+        # else:
+        #   turns = np.array([phi])
+        # for i in range(len(turns)):
+        #   turn = turns[i].item()
+        #   Motors.turnDegrees(turn,30)
+        #   time.sleep(1)
         # image_data = IT.takeImage()
         # if image_data ==[]: 
         #   dist_target = new_target_dist # Reinitialise the distance to the target
@@ -253,5 +277,6 @@ while True:
       # dist_target = dist_target - (mtr_speed*targetting_time) # Calculate the distance we moved toward the target
       # print("dist moving to target = ",mtr_speed*targetting_time)
       dist_moved_calc = True # We have now done the calc so no need to re-do it on the next iteration
-    Motors.turnDegrees(turn_inc,30) # Turn until no longer facing the object - this turns a set amount and then rechecks on the next iteration
+    turnCunt(turn_inc)
+    #Motors.turnDegrees(turn_inc,30) # Turn until no longer facing the object - this turns a set amount and then rechecks on the next iteration
     orient = orient + turn_inc # record orientation wrt to the target - i.e 0 is facing the target
