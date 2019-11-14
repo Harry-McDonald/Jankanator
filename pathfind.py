@@ -209,8 +209,25 @@ while True:
           turns = np.array([phi])
         for i in range(len(turns)):
           turn = turns[i].item()
+<<<<<<< HEAD
+<<<<<<< HEAD
+          Motors.turnDegrees(turn,speed = 30)
+=======
           Motors.turnDegrees(turn,speed = 15)
+>>>>>>> 0b0f9fe7cd1362be0508ddccad502699c85ec596
+=======
+          Motors.turnDegrees(turn,speed = 15)
+>>>>>>> 0b0f9fe7cd1362be0508ddccad502699c85ec596
           time.sleep(1)
+<<<<<<< HEAD
+        image_data = IT.takeImage()
+        if image_data ==[]: 
+          dist_target = new_target_dist # Reinitialise the distance to the target
+        else: 
+          dist_target = IT.getQRdist(image_data)
+          theta = IT.getAngle(image_data)
+          Motors.turnDegrees(theta, speed = 30)
+=======
         
         dist_target = findQR(turn_direction,dist_target) # search algorithm to find QR
         angleAdjust(dist_target)
@@ -224,6 +241,7 @@ while True:
         #   Motors.turnDegrees(theta)
         #   time.sleep(1)
         #--------------------------------
+>>>>>>> 822b62db06324ffc43fcdcc0fb3a4af91ecaf615
         #dist_target = new_target_dist # Reinitialise the distance to the target
         orient = 0 # degrees -> Reinitialise the orientation 0 deg is facing the target
         #Motors.write(mtr_speed, mtr_speed) # Get on your bike

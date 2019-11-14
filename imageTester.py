@@ -77,7 +77,7 @@ def getAngle(data):
   z_cm = zpx*cm2px
   print("z_cm = ",z_cm)
   print("dist = ",dist)
-  theta = math.atan(z_cm/dist)*180/math.pi
+  theta = (1/1.3)*math.atan(z_cm/dist)*180/math.pi
   return theta
 
 
