@@ -16,6 +16,36 @@ rc = RoverController()
 rc.connectIP()
 
 # ~~~~~~~~~~~~~~ Functions ~~~~~~~~~~~~~~~~~~
+def angleAdjust(dist_target):
+  QR_FOUND = True
+  image_data = IT.takeImage()
+  if image_data == []:
+    QR_FOUND = False
+    final_dist = dist_target
+  elif QR_FOUND:
+    dist_target = IT.getQRdist(image_data) #cm
+    theta = IT.getAngle(image_data)
+    print("theta1 = ",theta)
+    Motors.turnDegrees(theta)
+    time.sleep(1)
+  time.sleep(4)
+  return (QR_FOUND,dist_target)
+
+def findQR(turn_direction = None, dist_target = 200):
+  orient = 0
+  if turn_direction == "right" or turn_direction == None:
+    turn_inc = -20
+  elif turn_direction == "left":
+    turn_inc = 20
+  QR_FOUND = angleAdjust(dist_target)[1]
+  while QR_FOUND == False:
+    Motors.turnDegrees(turn_inc) # Turn until no longer facing the object - this turns a set amount and then rechecks on the next iteration
+    orient = orient + turn_inc # record orientation wrt to the target - i.e 0 is facing the target    
+    time.sleep(1)
+    QR_FOUND = angleAdjust(dist_target)[1]
+    if abs(orient) >= 360:
+      print("Bruh no idea...")
+
 def deg2rad(degrees):
   rads = degrees*math.pi/180
   return rads
@@ -53,29 +83,42 @@ turn_inc = 10 #degrees
 min_obj_IRdist = 50 #cm
 min_obj_Ultradist = 30 #cm
 evade_dist = 10 #cm
-
-# Define final goal
-image_data = IT.takeImage()
-if image_data == []:
-  QR_FOUND = False
-  final_dist = 200
-elif QR_FOUND:
-  final_dist = IT.getQRdist(image_data) #cm
-print("final_dist1 = ",final_dist)
-time.sleep(4)
-checkSet()
-checkSet()
-
-
+final_dist = 200
 dist_target = final_dist # Initialise the distance from the Jankanator to the flagpole
 
+# if doesnt work pass in final_dist to the function
+findQR(None,dist_target)
+angleAdjust(dist_target)
 
+# Define final goal
+# image_data = IT.takeImage()
+# if image_data == []:
+#   QR_FOUND = False
+#   final_dist = 200
+# elif QR_FOUND:
+#   final_dist = IT.getQRdist(image_data) #cm
+#   print("final_dist1 = ",final_dist)
+#   theta = IT.getAngle(image_data)
+#   Motors.turnDegrees(theta)
+#   time.sleep(1)
+#   print("theta1 = ",theta)
+# time.sleep(4)
 
+# QR_FOUND = True
+# image_data = IT.takeImage()
+# if image_data == []:
+#   QR_FOUND = False
+#   final_dist = 200
+# elif QR_FOUND:
+#   final_dist = IT.getQRdist(image_data) #cm
+#   theta = IT.getAngle(image_data)
+#   print("theta1 = ",theta)
+#   Motors.turnDegrees(theta)
+#   time.sleep(1)
 
 # Initialise orientation, turning increment
 orig_orient = 0 # degrees -> Facing the target
 orient = orig_orient #initialise
-
 
 # Start engine
 Motors.write(mtr_speed, mtr_speed)
@@ -121,6 +164,8 @@ while True:
           AVOIDING_TIMER = True # Record that avoiding timer has been set in this avoiding iteration
       else: # If we have cleared the object
         #print('STOP AVOIDING')
+        #TAKE IMAGE AND FIND TARGET
+
         Motors.stop()
         AVOIDING = False # No longer avoiding
         dist_moved_calc = False # Reinitialise until next avoiding stage
@@ -142,7 +187,10 @@ while True:
         new_target_dist = math.sqrt(dist_target**2+dist_avoiding**2 - 2*dist_target*dist_avoiding*math.cos(deg2rad(orient))) #Re-calculate distnace as crow flies to the target -> cos rule
         beta = 180 - rad2deg(math.asin(dist_target*math.sin(deg2rad(orient))/new_target_dist)) # Angle between new_target_dist and dist_avoiding -> sine rule -> also not its 180 due to quadrants
         phi = beta - 180 # degrees the rover must turn to be facing the target -> remember positive angles are clockwise on the Jankanator, we want to go the opposite here
-
+        if phi < 0:
+          turn_direction = "left"
+        else:
+          turn_direction = "right"
         inc = 5 # How many steps to break the turn int
         if phi > 45 or phi < -45 : # Break turn into 'inc' increments so that the tracks dont fall off
           turns = np.array([phi/inc for i in range(inc)])
@@ -153,13 +201,18 @@ while True:
           turn = turns[i].item()
           Motors.turnDegrees(turn,speed = 15)
           time.sleep(1)
-        image_data = IT.takeImage()
-        if image_data ==[]: 
-          dist_target = new_target_dist # Reinitialise the distance to the target
-        else: 
-          dist_target = IT.getQRdist(image_data)
-          theta = IT.getAngle(image_data)
-          Motors.turnDegrees(theta)
+        
+        findQR(turn_direction,dist_target) # search algorithm to find QR
+        #--------------------------------
+        # image_data = IT.takeImage()
+        # if image_data ==[]: 
+        #   dist_target = new_target_dist # Reinitialise the distance to the target
+        # else: 
+        #   dist_target = IT.getQRdist(image_data)
+        #   theta = IT.getAngle(image_data)
+        #   Motors.turnDegrees(theta)
+        #   time.sleep(1)
+        #--------------------------------
         #dist_target = new_target_dist # Reinitialise the distance to the target
         orient = 0 # degrees -> Reinitialise the orientation 0 deg is facing the target
         #Motors.write(mtr_speed, mtr_speed) # Get on your bike

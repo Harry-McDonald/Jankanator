@@ -9,7 +9,8 @@ def takeImage():
   image = Robot.getImageCapture(IMRES.R1920x1088)
   image = image.astype(numpy.uint8)
   barcodes = pyzbar.decode(image)
-  
+  if len(barcodes) == 0:
+    return []
   #print(type(barcodes)) # returns an empty list if none 
   # loop over the detected barcodes
   for barcode in barcodes:
@@ -78,6 +79,7 @@ def getAngle(data):
   print("dist = ",dist)
   theta = math.atan(z_cm/dist)*180/math.pi
   return theta
+
 
 
 
