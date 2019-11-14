@@ -79,7 +79,7 @@ AVOIDING_TIMER = False # Timer used to record time elapsed while moving towards 
 dist_moved_calc = False # Initialise
 INITIAL_EVADE = False # When an object is sensed the first manouever is to move 10cm in the clear direction and then run checks on the left ir
 QR_FOUND = True # initialise as true
-IR_OFF = False
+IR_ON = True
 TAKE_PHOTO = True
 
 # initialise variables
@@ -114,8 +114,9 @@ while True:
     dist_target = QR_FOUND[1]
     gunning_time = timer()
     print("VIBE CHECK")
-  if dist_target<5:
-    Motors.stop()
+  if dist_target<10:
+    IR_ON = False
+    Motors.moveDistance(dist_target-1)
     print("we're going dbah")
     break
   ultra_dist = Ultrasonic.read() # centimeters
@@ -149,16 +150,19 @@ while True:
         time.sleep(2)
         #print("~~~~~~ EVADE")
         Motors.moveDistance(evade_dist,mtr_speed,mtr_speed)
+        dist_avoiding = evade_dist
         time.sleep(2) # adjustable when optimising -> could make a min sleep function that determines time needed to move based on mtr_speed
         INITIAL_EVADE = False # We have finished our initial move - next iteration should check if there is a object on our left
       elif ir_distL < min_obj_IRdist:  #Check left IR sensor to see if it is next to an object -> if true we are still in the avoiding stage
         #print('Object on my left')
-        Motors.write(mtr_speed, mtr_speed) # Keep moving until clear
-        if not AVOIDING_TIMER: # if avoiding timer hasn't already been set -> set it
-          avoiding_time0 = timer() # Get time when motors start in AVOIDING mode
-          print("started avoiding at: ",avoiding_time0)
-          #print("Timer0 set")
-          AVOIDING_TIMER = True # Record that avoiding timer has been set in this avoiding iteration
+        #Motors.move(mtr_speed, mtr_speed) # Keep moving until clear
+        Motors.moveDistance(5)
+        dist_avoiding += 5
+        # if not AVOIDING_TIMER: # if avoiding timer hasn't already been set -> set it
+        #   avoiding_time0 = timer() # Get time when motors start in AVOIDING mode
+        #   print("started avoiding at: ",avoiding_time0)
+        #   #print("Timer0 set")
+        #   AVOIDING_TIMER = True # Record that avoiding timer has been set in this avoiding iteration
       else: # If we have cleared the object
         #print('STOP AVOIDING')
         #TAKE IMAGE AND FIND TARGET
@@ -170,17 +174,17 @@ while True:
         gunning_time = timer()
         print("stopped avoiding at: ",avoiding_time1)
 
-        if AVOIDING_TIMER: # check if extra avoiding was necessary
-          time_avoiding = avoiding_time1 - avoiding_time0 # Total time elapsed while avoiding
-          print("total elapsed avoiding: ",time_avoiding)
-          # print("time 0 = ", avoiding_time0)
-          # print("time 1 = ", avoiding_time1)
-          # print("time_avoiding",time_avoiding)
-          dist_avoiding = evade_dist + time_avoiding * mtr_speed # cm
-          print("dist_avoiding = ",dist_avoiding)
-        else: # if no extra avoiding was necessary
-          dist_avoiding = evade_dist
-          #print("dist_avoiding = ",dist_avoiding)
+        # if AVOIDING_TIMER: # check if extra avoiding was necessary
+        #   time_avoiding = avoiding_time1 - avoiding_time0 # Total time elapsed while avoiding
+        #   print("total elapsed avoiding: ",time_avoiding)
+        #   # print("time 0 = ", avoiding_time0)
+        #   # print("time 1 = ", avoiding_time1)
+        #   # print("time_avoiding",time_avoiding)
+        #   dist_avoiding = evade_dist + time_avoiding * mtr_speed # cm
+        #   print("dist_avoiding = ",dist_avoiding)
+        # else: # if no extra avoiding was necessary
+        #   dist_avoiding = evade_dist
+        #   #print("dist_avoiding = ",dist_avoiding)
 
         new_target_dist = math.sqrt(dist_target**2+dist_avoiding**2 - 2*dist_target*dist_avoiding*math.cos(deg2rad(orient))) #Re-calculate distnace as crow flies to the target -> cos rule
         beta = 180 - rad2deg(math.asin(dist_target*math.sin(deg2rad(orient))/new_target_dist)) # Angle between new_target_dist and dist_avoiding -> sine rule -> also not its 180 due to quadrants
@@ -198,7 +202,8 @@ while True:
           turns = np.array([phi])
         for i in range(len(turns)):
           turn = turns[i].item()
-          Motors.turnDegrees(turn)
+          Motors.turnDegrees(turn,30)
+          time.sleep(1)
         # image_data = IT.takeImage()
         # if image_data ==[]: 
         #   dist_target = new_target_dist # Reinitialise the distance to the target
@@ -221,6 +226,7 @@ while True:
         #--------------------------------
         #dist_target = new_target_dist # Reinitialise the distance to the target
         orient = 0 # degrees -> Reinitialise the orientation 0 deg is facing the target
+        dist_avoiding = 0 # re-initialse dist_avoiding
         #Motors.write(mtr_speed, mtr_speed) # Get on your bike
         target_time0 = timer() # Get time that the Jankanator starts moving towards the target again
         target_timer = True # Turn target timer on
@@ -230,7 +236,7 @@ while True:
       #print("STILL NOT AVOIDING")
       Motors.write(mtr_speed, mtr_speed) # Keep on trucking
 
-  elif ultra_dist <= min_obj_Ultradist:# and not IR_OFF: # Sense object
+  elif ultra_dist <= min_obj_Ultradist and IR_ON == True:# and not IR_OFF: # Sense object
     AVOIDING = True
     INITIAL_EVADE = True
     #print("AVOIDING")
@@ -247,5 +253,5 @@ while True:
       # dist_target = dist_target - (mtr_speed*targetting_time) # Calculate the distance we moved toward the target
       # print("dist moving to target = ",mtr_speed*targetting_time)
       dist_moved_calc = True # We have now done the calc so no need to re-do it on the next iteration
-    Motors.turnDegrees(turn_inc) # Turn until no longer facing the object - this turns a set amount and then rechecks on the next iteration
+    Motors.turnDegrees(turn_inc,30) # Turn until no longer facing the object - this turns a set amount and then rechecks on the next iteration
     orient = orient + turn_inc # record orientation wrt to the target - i.e 0 is facing the target
