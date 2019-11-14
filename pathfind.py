@@ -152,7 +152,11 @@ while True:
         for i in range(len(turns)):
           turn = turns[i].item()
 <<<<<<< HEAD
+<<<<<<< HEAD
           Motors.turnDegrees(turn,speed = 30)
+=======
+          Motors.turnDegrees(turn,speed = 15)
+>>>>>>> 0b0f9fe7cd1362be0508ddccad502699c85ec596
 =======
           Motors.turnDegrees(turn,speed = 15)
 >>>>>>> 0b0f9fe7cd1362be0508ddccad502699c85ec596
