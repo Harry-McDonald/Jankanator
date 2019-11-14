@@ -53,7 +53,7 @@ def getQRdist(data):
   #print(delta_y_right)
   h = (delta_y_left+delta_y_right)/2
   print("h2 = ",h)
-  F = 100*116.38841354229415/7.1
+  F = 110*116.38841354229415/7.1
   d = ((7.1*F/h))-8
   print("distance =",d)
   return d
