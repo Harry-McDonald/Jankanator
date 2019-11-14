@@ -24,26 +24,20 @@ def rad2deg(rads):
   degs = rads*180/math.pi
   return degs
 
+def checkSet():
+  image_data = IT.takeImage()
+  if image_data == []:
+    print("return")
+    return
+  theta = IT.getAngle(image_data)
+  print("theta1 = ",theta)
+  Motors.turnDegrees(theta)
+  time.sleep(4)
+
 # def QRdistance(h):
 #   F = 50*274/7.1
 #   d = 7.1*F/h -8
 #   return d
-
-# initialise variables
-mtr_speed = 10 #cm/s
-turn_inc = 10 #degrees
-min_obj_IRdist = 50 #cm
-min_obj_Ultradist = 30 #cm
-evade_dist = 10 #cm
-# Define final goal
-image_data = IT.takeImage()
-final_dist = IT.getQRdist(image_data) #cm
-print("final_dist = ",final_dist)
-theta = IT.getAngle(image_data)
-print("theta1 = ",theta)
-Motors.turnDegrees(theta)
-time.sleep(1)
-dist_target = final_dist # Initialise the distance from the Jankanator to the flagpole
 
 # Initial states
 AVOIDING = False # Status of the Jankanator while it is avoiding an object
@@ -51,6 +45,31 @@ target_timer = False # Timer used to record time elapsed while moving in the avo
 AVOIDING_TIMER = False # Timer used to record time elapsed while moving towards target -> Initialise to off
 dist_moved_calc = False # Initialise
 INITIAL_EVADE = False # When an object is sensed the first manouever is to move 10cm in the clear direction and then run checks on the left ir
+QR_FOUND = True # initialise as true
+
+# initialise variables
+mtr_speed = 10 #cm/s
+turn_inc = 10 #degrees
+min_obj_IRdist = 50 #cm
+min_obj_Ultradist = 30 #cm
+evade_dist = 10 #cm
+
+# Define final goal
+image_data = IT.takeImage()
+if image_data == []:
+  QR_FOUND = False
+  final_dist = 200
+elif QR_FOUND:
+  final_dist = IT.getQRdist(image_data) #cm
+print("final_dist1 = ",final_dist)
+time.sleep(4)
+checkSet()
+checkSet()
+
+
+dist_target = final_dist # Initialise the distance from the Jankanator to the flagpole
+
+
 
 
 # Initialise orientation, turning increment
@@ -132,10 +151,10 @@ while True:
           turns = np.array([phi])
         for i in range(len(turns)):
           turn = turns[i].item()
-          Motors.turnDegrees(turn,speed = 5)
+          Motors.turnDegrees(turn,speed = 15)
           time.sleep(1)
         image_data = IT.takeImage()
-        if image_data['barcode_len']==0: 
+        if image_data ==[]: 
           dist_target = new_target_dist # Reinitialise the distance to the target
         else: 
           dist_target = IT.getQRdist(image_data)
